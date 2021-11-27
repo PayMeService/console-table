@@ -148,6 +148,26 @@ class ConsoleTableTest extends TestCase
         $this->assertEquals(trim($nonBorderedTableWithHeader), trim($table->getTable()));
     }
 
+    public function testNonBorderedTableWithHeaderWithSlackUrlContent()
+    {
+        $nonBorderedTableWithHeaderWithSlackUrlContent = '
+ Language  Year 
+----------------
+ <https://www.php.com/|PHP>  1994 
+ C++       1983 
+ C         1970 ';
+
+        $table = new ConsoleTable();
+        $table
+            ->setHeaders(array('Language', 'Year'))
+            ->addRow(array('<https://www.php.com/|PHP>', 1994))
+            ->addRow(array('C++', 1983))
+            ->addRow(array('C', 1970))
+            ->hideBorder();
+
+        $this->assertEquals(trim($nonBorderedTableWithHeaderWithSlackUrlContent), trim($table->getTable()));
+    }
+
     public function testNonBorderedTableWithoutHeader()
     {
         $nonBorderedTableWithoutHeader = '

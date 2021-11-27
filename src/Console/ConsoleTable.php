@@ -313,7 +313,7 @@ class ConsoleTable
         foreach ($this->data as $row) {
             if (is_array($row)) {
                 foreach ($row as $x => $col) {
-                    $content = preg_replace('#\x1b[[][^A-Za-z]*[A-Za-z]#', '', $col);
+                    $content = $this->sanitizeContent($col);
                     if (!isset($this->columnWidths[$x])) {
                         $this->columnWidths[$x] = mb_strlen($content, 'UTF-8');
                     } else {
@@ -373,5 +373,22 @@ class ConsoleTable
         if ($count > $this->maxColumnCount) {
             $this->maxColumnCount = $count;
         }
+    }
+
+    /**
+     * Sanitize content for column width calculation
+     * @param string $content The content
+     */
+    private function sanitizeContent($content)
+    {
+        $content = preg_replace('#\x1b[[][^A-Za-z]*[A-Za-z]#', '', $content);
+
+        // Handle Slack URLs with description
+        if (preg_match('/^<.+\|.+>$/', $content)) {
+            $content = explode('|', trim($content, '<>'));
+            $content = end($content);
+        }
+
+        return $content;
     }
 }
